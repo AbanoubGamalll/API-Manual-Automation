@@ -5,7 +5,7 @@ import static io.restassured.RestAssured.given;
 
 public class CheckServer {
     @Test
-    private void getToken() {
+    private void ping() {
         given()
                 .spec(Data.requestSpecification_ForGet)
         .when()
