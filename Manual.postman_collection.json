@@ -1,0 +1,873 @@
+{
+	"info": {
+		"_postman_id": "e8337320-3732-4d48-b27d-5c5eed21d505",
+		"name": "ITI-API-Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34930764"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Token is present in the response body\", function () {\r",
+									"    pm.expect(pm.response.json.token).to.not.be.null;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"johnd\",\r\n    \"password\": \"m38rmF$\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/auth/login",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Output is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Output is not an empty array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/products",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct schema\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('object');",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');",
+									"    pm.expect(jsonData).to.have.property('title').that.is.a('string');",
+									"    pm.expect(jsonData).to.have.property('price').that.is.a('number');",
+									"    pm.expect(jsonData).to.have.property('description').that.is.a('string');",
+									"    pm.expect(jsonData).to.have.property('category').that.is.a('string');",
+									"    pm.expect(jsonData).to.have.property('image').that.is.a('string');",
+									"    pm.expect(jsonData).to.have.property('rating').that.is.an('object');",
+									"    pm.expect(jsonData.rating).to.have.property('rate').that.is.a('number');",
+									"    pm.expect(jsonData.rating).to.have.property('count').that.is.a('number');",
+									"});",
+									"",
+									"pm.test(\"ID is the same\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.eql(Number(pm.collectionVariables.get(\"product_id\")));",
+									"});"
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"product_id\", 1);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/products/{{product_id}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"products",
+								"{{product_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var product = {\r",
+									"    \"id\": 1,\r",
+									"    \"title\": \"My title is tht best title\",\r",
+									"    \"price\": 109.95,\r",
+									"    \"description\": \"My description is tht best description\",\r",
+									"    \"category\": \"men's clothing\",\r",
+									"    \"image\": \"https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_t.png\"\r",
+									"}\r",
+									"\r",
+									"pm.collectionVariables.set(\"productData\", JSON.stringify(product));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct schema\", function () {\r",
+									"    var response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response).to.be.an('object');\r",
+									"    pm.expect(response).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(response).to.have.property('title').that.is.a('string');\r",
+									"    pm.expect(response).to.have.property('price').that.is.a('number');\r",
+									"    pm.expect(response).to.have.property('description').that.is.a('string');\r",
+									"    pm.expect(response).to.have.property('category').that.is.a('string');\r",
+									"    pm.expect(response).to.have.property('image').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"const productData = JSON.parse(pm.collectionVariables.get(\"productData\"));\r",
+									"productData.id =  pm.response.json().id; \r",
+									"pm.collectionVariables.set(\"productData\", JSON.stringify(productData));\r",
+									"\r",
+									"pm.test(\"Response body contains correct product details\", function () {\r",
+									"    var response = pm.response.json();\r",
+									"    var productData = JSON.parse(pm.collectionVariables.get(\"productData\"));\r",
+									"\r",
+									"    pm.expect(response.title).to.eql(productData.title);\r",
+									"    pm.expect(response.price).to.eql(productData.price);\r",
+									"    pm.expect(response.description).to.eql(productData.description);\r",
+									"    pm.expect(response.image).to.eql(productData.image);\r",
+									"    pm.expect(response.category).to.eql(productData.category);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{productData}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/products",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update product",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var product = JSON.parse(pm.collectionVariables.get(\"productData\"));\r",
+									"\r",
+									"product.title = \"not the best title\";\r",
+									"product.description = \"My description is tht best description\";\r",
+									"\r",
+									"pm.collectionVariables.set(\"productData\", JSON.stringify(product));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct schema\", function () {\r",
+									"    var response = pm.response.json();\r",
+									"\r",
+									"    pm.expect(response).to.be.an('object');\r",
+									"    pm.expect(response).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(response).to.have.property('title').that.is.a('string');\r",
+									"    pm.expect(response).to.have.property('price').that.is.a('number');\r",
+									"    pm.expect(response).to.have.property('description').that.is.a('string');\r",
+									"    pm.expect(response).to.have.property('category').that.is.a('string');\r",
+									"    pm.expect(response).to.have.property('image').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"const productData = JSON.parse(pm.collectionVariables.get(\"productData\"));\r",
+									"\r",
+									"pm.test(\"Response body contains correct product details\", function () {\r",
+									"    var response = pm.response.json();\r",
+									"    var productData = JSON.parse(pm.collectionVariables.get(\"productData\"));\r",
+									"\r",
+									"    pm.expect(response.id).to.eql(21);\r",
+									"    pm.expect(response.title).to.eql(productData.title);\r",
+									"    pm.expect(response.price).to.eql(productData.price);\r",
+									"    pm.expect(response.description).to.eql(productData.description);\r",
+									"    pm.expect(response.image).to.eql(productData.image);\r",
+									"    pm.expect(response.category).to.eql(productData.category);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{productData}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/products/21",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"products",
+								"21"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is empty\", function () {",
+									"    pm.expect(pm.response.text().trim()).to.eql(\"\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{productData}}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/products/21",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"products",
+								"21"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Carts",
+			"item": [
+				{
+					"name": "Get all carts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Output is an array\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Output is not an empty array\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.length).to.be.above(0);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/carts",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"cart_id\", 5);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct schema\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an('object');\r",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('userId').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('date').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('products').that.is.an('array');\r",
+									"\r",
+									"    jsonData.products.forEach(function(product, idx) {\r",
+									"        pm.expect(product).to.be.an('object');\r",
+									"        pm.expect(product).to.have.property('productId').that.is.a('number');\r",
+									"        pm.expect(product).to.have.property('quantity').that.is.a('number');\r",
+									"    });\r",
+									"\r",
+									"    pm.expect(jsonData).to.have.property('__v').that.is.a('number');\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ID is the same\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.eql(Number(pm.collectionVariables.get(\"cart_id\")));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/carts/{{cart_id}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var cart = {\r",
+									"    \"id\": 0,\r",
+									"    \"userId\": 0,\r",
+									"    \"products\": [\r",
+									"        {\r",
+									"            \"productId\": 7,\r",
+									"            \"quantity\": 1\r",
+									"        },\r",
+									"        {\r",
+									"            \"productId\": 8,\r",
+									"            \"quantity\": 1\r",
+									"        }\r",
+									"    ]\r",
+									"};\r",
+									"\r",
+									"pm.collectionVariables.set(\"cartData\", JSON.stringify(cart));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has correct schema\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an('object');\r",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('userId').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('products').that.is.an('array');\r",
+									"    jsonData.products.forEach(function(product, idx) {\r",
+									"        pm.expect(product).to.be.an('object');\r",
+									"        \r",
+									"        pm.expect(product).to.have.property('productId').that.is.a('number');\r",
+									"        pm.expect(product).to.have.property('quantity').that.is.a('number');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"const cartData = JSON.parse(pm.collectionVariables.get(\"cartData\"));\r",
+									"cartData.id =  pm.response.json().id; \r",
+									"pm.collectionVariables.set(\"cartData\", JSON.stringify(cartData));\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has correct data\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData.userId).to.eql(cartData.userId);\r",
+									"\r",
+									"    pm.expect(responseData.products.length).to.eql(cartData.products.length);\r",
+									"\r",
+									"    responseData.products.forEach(function (product, idx) {\r",
+									"        pm.expect(product.productId).to.eql(cartData.products[idx].productId);\r",
+									"        pm.expect(product.quantity).to.eql(cartData.products[idx].quantity);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{cartData}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/carts",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var cartData = JSON.parse(pm.collectionVariables.get(\"cartData\"));\r",
+									"\r",
+									"cartData.products[1].productId = 100;\r",
+									"\r",
+									"pm.collectionVariables.set(\"cartData\",JSON.stringify(cartData));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct schema\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an('object');\r",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('userId').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('products').that.is.an('array');\r",
+									"    jsonData.products.forEach(function(product, idx) {\r",
+									"        pm.expect(product).to.be.an('object');\r",
+									"        \r",
+									"        pm.expect(product).to.have.property('productId').that.is.a('number');\r",
+									"        pm.expect(product).to.have.property('quantity').that.is.a('number');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"var cartData = JSON.parse(pm.collectionVariables.get(\"cartData\"));\r",
+									"\r",
+									"pm.test(\"Response has correct data\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData.id).to.eql(pm.collectionVariables.get(\"cart_id\"));\r",
+									"\r",
+									"    pm.expect(responseData.userId).to.eql(cartData.userId);\r",
+									"\r",
+									"    pm.expect(responseData.products.length).to.eql(cartData.products.length);\r",
+									"\r",
+									"    responseData.products.forEach(function (product, idx) {\r",
+									"        pm.expect(product.productId).to.eql(cartData.products[idx].productId);\r",
+									"        pm.expect(product.quantity).to.eql(cartData.products[idx].quantity);\r",
+									"    });\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{cartData}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/carts/{{cart_id}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has correct schema\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an('object');\r",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('userId').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('date').that.is.a('string');\r",
+									"\r",
+									"    pm.expect(jsonData).to.have.property('products').that.is.an('array');\r",
+									"    jsonData.products.forEach(function(product, idx) {\r",
+									"        pm.expect(product).to.be.an('object');\r",
+									"        \r",
+									"        pm.expect(product).to.have.property('productId').that.is.a('number');\r",
+									"        pm.expect(product).to.have.property('quantity').that.is.a('number');\r",
+									"    });\r",
+									"    pm.expect(jsonData).to.have.property('__v').that.is.a('number');\r",
+									"\r",
+									"});\r",
+									"\r",
+									"var cartData = JSON.parse(pm.collectionVariables.get(\"cartData\"));\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/carts/{{cart_id}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"carts",
+								"{{cart_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get all users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Output is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Output is not an empty array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/users",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Check Server is avilable",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL}}",
+					"host": [
+						"{{Base_URL}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Base_URL",
+			"value": ""
+		},
+		{
+			"key": "product_id",
+			"value": ""
+		},
+		{
+			"key": "productData",
+			"value": ""
+		},
+		{
+			"key": "cart_id",
+			"value": ""
+		},
+		{
+			"key": "cartData",
+			"value": ""
+		}
+	]
+}
